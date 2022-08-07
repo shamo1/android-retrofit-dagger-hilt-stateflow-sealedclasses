@@ -10,6 +10,7 @@ import com.example.retrofitmvvmstateflowsealedclasses.databinding.ActivityMainBi
 import com.example.retrofitmvvmstateflowsealedclasses.utils.ApiResponse
 import com.example.retrofitmvvmstateflowsealedclasses.viewmodels.MainViewmodel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.getUser()
         lifecycleScope.launch {
-            mainViewModel.userStateFlow.collect { aapiResponse ->
+            mainViewModel.userStateFlow.collect{ aapiResponse ->
                 when (aapiResponse) {
 
                     is ApiResponse.Loading -> {
@@ -36,11 +37,11 @@ class MainActivity : AppCompatActivity() {
 
                     is ApiResponse.Success -> {
                         Toast.makeText(this@MainActivity, "Data Loaded Successfull", Toast.LENGTH_SHORT).show()
-                        Log.d("ApiData", "onCreate: ${aapiResponse.data}")
+                        Log.d("ApiData", "onCreate: ${aapiResponse.data?.body()}")
                     }
 
                     is ApiResponse.Failure -> {
-                        Toast.makeText(this@MainActivity, "Data Loading Failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "Data Loading Failed Error: ${aapiResponse.message}", Toast.LENGTH_SHORT).show()
                         Log.d("ApiData", "onCreate: ${aapiResponse.message}")
                     }
                     else -> {}
